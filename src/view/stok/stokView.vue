@@ -4,10 +4,11 @@ import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
 import Table from '@/components/TableData.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import BaseButton from '@/components/BaseButton.vue'
 import { useProductStore } from '@/stores/product'
+import { useCategoryStore } from '@/stores/category'
 
 const productStore = useProductStore()
+const categoryStore = useCategoryStore()
 
 const thead = ['Kategori', 'Nama', 'Deskripsi', 'Harga Jual', 'Satuan']
 
@@ -38,6 +39,11 @@ const columns = [
         keyItems: (obj) => obj.price_sell,
     },
     {
+        type: 'attributes',
+        label: 'Stok',
+        keyItems: (obj) => obj.qty,
+    },
+    {
         type: 'relationships',
         label: 'Satuan',
         relationships: (obj) => obj.unit,
@@ -51,14 +57,12 @@ const confirmDelete = (id) => {
 
 onMounted(async () => {
     await productStore.getProducts()
+    await categoryStore.getCategory()
+    console.log(categoryStore._categories)
 })
 
-const filterTerbaru = () => {
-    productStore.setFilter('date', 'terbaru')
-}
-
-const filterTerlama = () => {
-    productStore.setFilter('date', 'terlama')
+function setFilter(e) {
+    productStore.setFilterCategory('category', e.target.value)
 }
 </script>
 
@@ -67,8 +71,12 @@ const filterTerlama = () => {
         <SectionMain>
             <CardBox>
                 <div class="filter-buttons">
-                    <BaseButton color="success" label="Data Terbaru" class="mb-2" @click="filterTerbaru"></BaseButton>
-                    <BaseButton color="danger" label="Data Terlama" class="mb-2" @click="filterTerlama"></BaseButton>
+                    <select type="text" class="text-black rounded-md mb-3" @change="setFilter">
+                        <option value="default">-</option>
+                        <option v-for="item in categoryStore.categories" :value="item.id">
+                            {{ item.attributes.category }}
+                        </option>
+                    </select>
                 </div>
                 <Table
                     :items="productStore.products"
