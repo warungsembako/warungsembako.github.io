@@ -20,8 +20,6 @@ const form = reactive({
 const handleReset = () => {
     form.category = ''
 }
-
-
 </script>
 
 <template>
