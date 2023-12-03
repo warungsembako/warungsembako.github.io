@@ -204,7 +204,7 @@ router.beforeEach(async (to, from, next) => {
                 next()
             }
         } catch (error) {
-            if (error.response.status == 401) {
+            if (error) {
                 next({
                     name: 'login',
                 })

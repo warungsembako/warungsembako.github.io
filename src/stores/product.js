@@ -32,33 +32,39 @@ export const useProductStore = defineStore('product', {
     },
 
     actions: {
-        async getToken() {
-            await axios.get('/sanctum/csrf-cookie')
+        getToken() {
+            const user = JSON.parse(localStorage.getItem('user'))
+            return user.token
         },
         async getProducts() {
-            await this.getToken()
-            const data = await axios.get('/api/product')
+            const data = await axios.get('/api/product', { headers: { Authorization: 'Bearer ' + this.getToken() } })
             this._products = data.data.data
         },
         async getProductById(id) {
             await this.getToken()
-            await axios.get(`/api/product/${id}`).then((res) => {
-                this._product = res.data.data
-            })
+            await axios
+                .get(`/api/product/${id}`, { headers: { Authorization: 'Bearer ' + this.getToken() } })
+                .then((res) => {
+                    this._product = res.data.data
+                })
         },
         async handleAddData(data) {
             this.addErrors = []
             await this.getToken()
             try {
-                await axios.post('/api/product', {
-                    unit_id: data.unit.id,
-                    category_id: data.category.id,
-                    name: data.name,
-                    desc: data.desc,
-                    price_buy: data.price_buy,
-                    price_sell: data.price_sell,
-                    qty: data.qty,
-                })
+                await axios.post(
+                    '/api/product',
+                    {
+                        unit_id: data.unit.id,
+                        category_id: data.category.id,
+                        name: data.name,
+                        desc: data.desc,
+                        price_buy: data.price_buy,
+                        price_sell: data.price_sell,
+                        qty: data.qty,
+                    },
+                    { headers: { Authorization: 'Bearer ' + this.getToken() } }
+                )
 
                 // Menampilkan pemberitahuan SweetAlert2 setelah berhasil
                 Swal.fire({
@@ -84,15 +90,19 @@ export const useProductStore = defineStore('product', {
             await this.getToken()
             try {
                 await axios
-                    .put(`/api/product/${id}`, {
-                        unit_id: data.unit.id,
-                        category_id: data.category.id,
-                        name: data.name,
-                        desc: data.desc,
-                        price_buy: data.price_buy,
-                        price_sell: data.price_sell,
-                        qty: data.qty,
-                    })
+                    .put(
+                        `/api/product/${id}`,
+                        {
+                            unit_id: data.unit.id,
+                            category_id: data.category.id,
+                            name: data.name,
+                            desc: data.desc,
+                            price_buy: data.price_buy,
+                            price_sell: data.price_sell,
+                            qty: data.qty,
+                        },
+                        { headers: { Authorization: 'Bearer ' + this.getToken() } }
+                    )
                     .then(this.router.push({ name: 'data-produk' }))
             } catch (error) {
                 if (error.response.status === 422) {
@@ -102,10 +112,12 @@ export const useProductStore = defineStore('product', {
         },
         async handleDeleteData(id) {
             await this.getToken()
-            await axios.get(`/api/productDelete/${id}`).then(() => {
-                const productIndex = this.products.findIndex((p) => p.id === id)
-                this.products.splice(productIndex, 1)
-            })
+            await axios
+                .delete(`/api/product/${id}`, { headers: { Authorization: 'Bearer ' + this.getToken() } })
+                .then(() => {
+                    const productIndex = this.products.findIndex((p) => p.id === id)
+                    this.products.splice(productIndex, 1)
+                })
         },
         setFilter(kind, filterType) {
             this.kind = kind

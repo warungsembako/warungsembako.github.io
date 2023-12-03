@@ -27,20 +27,23 @@ export const useCategoryStore = defineStore('category', {
     },
 
     actions: {
-        async getToken() {
-            await axios.get('/sanctum/csrf-cookie')
+        getToken() {
+            const user = JSON.parse(localStorage.getItem('user'))
+            return user.token
         },
         async getCategory() {
             await this.getToken()
-            const data = await axios.get('/api/category')
+            const data = await axios.get('/api/category', { headers: { Authorization: 'Bearer ' + this.getToken() } })
             this._categories = data.data.data
             // console.log(this._categories)
         },
         async getCategoryById(id) {
             await this.getToken()
-            await axios.get(`/api/category/${id}`).then((res) => {
-                this._category = res.data.data
-            })
+            await axios
+                .get(`/api/category/${id}`, { headers: { Authorization: 'Bearer ' + this.getToken() } })
+                .then((res) => {
+                    this._category = res.data.data
+                })
         },
         async handleAddData(data) {
             this.addErrors = []
@@ -58,9 +61,13 @@ export const useCategoryStore = defineStore('category', {
                     })
                 } else {
                     // Jika kategori belum ada, tambahkan ke database
-                    await axios.post('/api/category', {
-                        category: data.category,
-                    })
+                    await axios.post(
+                        '/api/category',
+                        {
+                            category: data.category,
+                        },
+                        { headers: { Authorization: 'Bearer ' + this.getToken() } }
+                    )
 
                     // Menampilkan pemberitahuan SweetAlert2 setelah berhasil
                     Swal.fire({
@@ -85,9 +92,13 @@ export const useCategoryStore = defineStore('category', {
             await this.getToken()
             try {
                 await axios
-                    .put(`/api/category/${id}`, {
-                        category: data.category,
-                    })
+                    .put(
+                        `/api/category/${id}`,
+                        {
+                            category: data.category,
+                        },
+                        { headers: { Authorization: 'Bearer ' + this.getToken() } }
+                    )
                     .then(this.router.push({ name: 'data-kategori' }))
             } catch (error) {
                 if (error.response.status === 422) {
@@ -97,10 +108,12 @@ export const useCategoryStore = defineStore('category', {
         },
         async handleDeleteData(id) {
             await this.getToken()
-            await axios.get(`/api/categoryDelete/${id}`).then(() => {
-                const categoryIndex = this.categories.findIndex((p) => p.id === id)
-                this.categories.splice(categoryIndex, 1)
-            })
+            await axios
+                .delete(`/api/category/${id}`, { headers: { Authorization: 'Bearer ' + this.getToken() } })
+                .then(() => {
+                    const categoryIndex = this.categories.findIndex((p) => p.id === id)
+                    this.categories.splice(categoryIndex, 1)
+                })
         },
         setFilter(filterType) {
             this.filter = filterType
