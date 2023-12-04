@@ -3,6 +3,7 @@ import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
+        token: '',
         authUser: null,
         autErrors: [],
         isAuth: false,
@@ -16,22 +17,26 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         async getToken() {
-            await axios.get('/sanctum/csrf-cookie')
+            const user = JSON.parse(localStorage.getItem('user'))
+            if (user) {
+                this.authUser = user
+            }
         },
         async getUser() {
             await this.getToken()
-            const data = await axios.get('/api/user')
-            this.authUser = data.data
+            // const data = await axios.get('/api/user')
+            // this.authUser = data.data
             this.isAuth = true
         },
         async handleLogin(data) {
             this.autErrors = []
             await this.getToken()
             try {
-                await axios.post('/login', {
+                const user = await axios.post('/api/auth/login', {
                     email: data.email,
                     password: data.pass,
                 })
+                localStorage.setItem('user', JSON.stringify(user.data))
                 this.router.push('/')
                 this.isAuth = true
             } catch (error) {
@@ -41,7 +46,8 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         async handleLogout() {
-            await axios.post('/logout')
+            await axios.post('/api/auth/logout', {}, { headers: { Authorization: 'Bearer ' + this.authUser.token } })
+            localStorage.clear()
             this.authUser = null
             this.isAuth = false
             this.router.push('/login')

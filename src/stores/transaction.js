@@ -22,12 +22,15 @@ export const useTransactionStore = defineStore('transaction', {
     },
 
     actions: {
-        async getToken() {
-            await axios.get('/sanctum/csrf-cookie')
+        getToken() {
+            const user = JSON.parse(localStorage.getItem('user'))
+            return user.token
         },
         async getTransactions() {
             await this.getToken()
-            const data = await axios.get('/api/transaction')
+            const data = await axios.get('/api/transaction', {
+                headers: { Authorization: 'Bearer ' + this.getToken() },
+            })
             this._transactions = data.data.data
         },
         async handleAddData(data) {
@@ -35,11 +38,15 @@ export const useTransactionStore = defineStore('transaction', {
             await this.getToken()
             try {
                 await axios
-                    .post('/api/transaction', {
-                        product_id: data.product.id,
-                        qty: data.qty,
-                        total: data.qty * data.product.attributes.price_sell,
-                    })
+                    .post(
+                        '/api/transaction',
+                        {
+                            product_id: data.product.id,
+                            qty: data.qty,
+                            total: data.qty * data.product.attributes.price_sell,
+                        },
+                        { headers: { Authorization: 'Bearer ' + this.getToken() } }
+                    )
                     .then(() => {
                         // Menampilkan pemberitahuan SweetAlert2 setelah berhasil
                         Swal.fire({

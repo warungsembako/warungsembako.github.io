@@ -1,44 +1,53 @@
 import { defineStore } from 'pinia'
-// import axios from "axios";
+import * as styles from '@/styles'
+import { darkModeKey, styleKey } from '@/config'
 
-export const useMainStore = defineStore('main', {
+export const useStyleStore = defineStore('style', {
     state: () => ({
-        /* User */
-        userName: null,
-        userEmail: null,
-        userAvatar: null,
+        /* Styles */
+        asideStyle: '',
+        asideScrollbarsStyle: '',
+        asideBrandStyle: '',
+        asideMenuItemStyle: '',
+        asideMenuItemActiveStyle: '',
+        asideMenuDropdownStyle: '',
+        navBarItemLabelStyle: '',
+        navBarItemLabelHoverStyle: '',
+        navBarItemLabelActiveColorStyle: '',
+        overlayStyle: '',
 
-        /* Field focus with ctrl+k (to register only once) */
-        isFieldFocusRegistered: false,
-
-        /* Sample data (commonly used) */
-        clients: [],
-        history: [],
+        /* Dark mode */
+        darkMode: false,
     }),
     actions: {
-        setUser(payload) {
-            if (payload.name) {
-                this.userName = payload.name
+        setStyle(payload) {
+            if (!styles[payload]) {
+                return
             }
-            if (payload.email) {
-                this.userEmail = payload.email
+
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem(styleKey, payload)
             }
-            if (payload.avatar) {
-                this.userAvatar = payload.avatar
+
+            const style = styles[payload]
+
+            for (const key in style) {
+                this[`${key}Style`] = style[key]
             }
         },
 
-        // fetch(sampleDataKey) {
-        //   axios
-        //     .get(`data-sources/${sampleDataKey}.json`)
-        //     .then((r) => {
-        //       if (r.data && r.data.data) {
-        //         this[sampleDataKey] = r.data.data;
-        //       }
-        //     })
-        //     .catch((error) => {
-        //       alert(error.message);
-        //     });
-        // },
+        setDarkMode(payload = null) {
+            this.darkMode = payload !== null ? payload : !this.darkMode
+
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem(darkModeKey, this.darkMode ? '1' : '0')
+            }
+
+            if (typeof document !== 'undefined') {
+                document.body.classList[this.darkMode ? 'add' : 'remove']('dark-scrollbars')
+
+                document.documentElement.classList[this.darkMode ? 'add' : 'remove']('dark-scrollbars-compat')
+            }
+        },
     },
 })
