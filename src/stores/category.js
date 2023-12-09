@@ -14,11 +14,9 @@ export const useCategoryStore = defineStore('category', {
         categories: (state) => {
             if (state.filter === 'terbaru') {
                 // Mengembalikan data terbaru
-                console.log('masuk')
                 return state._categories
             } else if (state.filter === 'terlama') {
                 // Mengembalikan data terlama
-                console.log('masuk_ter')
                 return [...state._categories].reverse()
             }
         },
@@ -35,7 +33,6 @@ export const useCategoryStore = defineStore('category', {
             await this.getToken()
             const data = await axios.get('/api/category', { headers: { Authorization: 'Bearer ' + this.getToken() } })
             this._categories = data.data.data
-            // console.log(this._categories)
         },
         async getCategoryById(id) {
             await this.getToken()

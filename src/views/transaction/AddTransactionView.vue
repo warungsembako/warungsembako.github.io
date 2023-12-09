@@ -9,6 +9,7 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { useProductStore } from '@/stores/product'
 import { useTransactionStore } from '@/stores/transaction'
+import { formatNumberToCurrency } from 'rupiah-currency-formatter'
 
 const productStore = useProductStore()
 const transactionStore = useTransactionStore()
@@ -57,13 +58,13 @@ onMounted(async () => {
                     <h2 class="text-gray-500 mt-3">Nama</h2>
                     <p class="mt-2 text-lg">{{ form.product.attributes.name }}</p>
                     <h2 class="text-gray-500 mt-3">Harga</h2>
-                    <p class="mt-2 text-lg">{{ form.product.attributes.price_sell }}</p>
+                    <p class="mt-2 text-lg">{{ formatNumberToCurrency(Math.ceil(form.product.attributes.price_sell)) }}</p>
                     <h2 class="text-gray-500 mt-3">Jumlah</h2>
                     <p class="mt-2 text-lg">
                         {{ form.qty + ' ' + form.product.relationships.unit.attributes.unit }}
                     </p>
                     <h2 class="text-gray-500 mt-3">Total</h2>
-                    <p class="mt-2 text-lg">{{ form.product.attributes.price_sell * form.qty }}</p>
+                    <p class="mt-2 text-lg">{{ formatNumberToCurrency(Math.ceil(form.product.attributes.price_sell * form.qty)) }}</p>
                 </div>
                 <template #footer>
                     <BaseButtons>

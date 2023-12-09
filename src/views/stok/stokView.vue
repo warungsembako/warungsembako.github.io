@@ -6,6 +6,7 @@ import Table from '@/components/TableData.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import { useProductStore } from '@/stores/product'
 import { useCategoryStore } from '@/stores/category'
+import { formatNumberToCurrency } from 'rupiah-currency-formatter'
 
 const productStore = useProductStore()
 const categoryStore = useCategoryStore()
@@ -36,7 +37,7 @@ const columns = [
     {
         type: 'attributes',
         label: 'Harga Jual',
-        keyItems: (obj) => obj.price_sell,
+        keyItems: (obj) => formatNumberToCurrency(Math.ceil(obj.price_sell)),
     },
     {
         type: 'attributes',
@@ -58,7 +59,6 @@ const confirmDelete = (id) => {
 onMounted(async () => {
     await productStore.getProducts()
     await categoryStore.getCategory()
-    console.log(categoryStore._categories)
 })
 
 function setFilter(e) {
@@ -73,7 +73,7 @@ function setFilter(e) {
                 <div class="filter-buttons">
                     <select type="text" class="text-black rounded-md mb-3" @change="setFilter">
                         <option value="default">-</option>
-                        <option v-for="item in categoryStore.categories" :value="item.id">
+                        <option v-for="item in categoryStore.categories" :key="item.id" :value="item.id">
                             {{ item.attributes.category }}
                         </option>
                     </select>

@@ -14,7 +14,6 @@ export const useProductStore = defineStore('product', {
 
     getters: {
         products: (state) => {
-            console.log(state._products)
             if (state.kind == 'date') {
                 if (state.filter === 'terbaru') {
                     return state._products // Mengembalikan data terbaru

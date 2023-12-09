@@ -32,7 +32,6 @@ onMounted(async () => {
 })
 
 const filterTerbaru = () => {
-    console.log('terbaru')
     categoryStore.setFilter('terbaru')
     // Panggil action lainnya jika diperlukan
 }
@@ -40,7 +39,6 @@ const filterTerbaru = () => {
 const filterTerlama = () => {
     categoryStore.setFilter('terlama')
     // Panggil action lainnya jika diperlukan
-    console.log('terlama')
 }
 </script>
 

@@ -7,6 +7,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import { mdiArrowLeftThinCircleOutline } from '@mdi/js'
 import { useProductStore } from '@/stores/product'
+import { formatNumberToCurrency } from 'rupiah-currency-formatter'
 
 const route = useRoute()
 const productStore = useProductStore()
@@ -29,8 +30,8 @@ onMounted(async () => {
     data.category = productStore.product.relationships.category.attributes.category
     data.name = productStore.product.attributes.name
     data.desc = productStore.product.attributes.desc
-    data.price_buy = productStore.product.attributes.price_buy
-    data.price_sell = productStore.product.attributes.price_sell
+    data.price_buy = formatNumberToCurrency(Math.ceil(productStore.product.attributes.price_buy))
+    data.price_sell = formatNumberToCurrency(Math.ceil(productStore.product.attributes.price_sell))
     data.qty = productStore.product.attributes.qty
     data.unit = productStore.product.relationships.unit.attributes.desc
 })

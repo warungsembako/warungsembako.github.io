@@ -6,6 +6,7 @@ import Table from '@/components/TableData.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import { useTransactionStore } from '@/stores/transaction'
+import { formatNumberToCurrency } from 'rupiah-currency-formatter'
 
 const transactionStore = useTransactionStore()
 
@@ -37,12 +38,12 @@ const columns = [
         type: 'relationships',
         label: 'Harga',
         relationships: (obj) => obj.product,
-        keyItems: (obj) => obj.attributes.price_sell,
+        keyItems: (obj) => formatNumberToCurrency(Math.ceil(obj.attributes.price_sell)),
     },
     {
         type: 'attributes',
         label: 'Total',
-        keyItems: (obj) => obj.total,
+        keyItems: (obj) => formatNumberToCurrency(Math.ceil(obj.total)),
     },
 ]
 

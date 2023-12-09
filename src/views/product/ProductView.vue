@@ -5,6 +5,7 @@ import CardBox from '@/components/CardBox.vue'
 import Table from '@/components/TableData.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import BaseButton from '@/components/BaseButton.vue'
+import { formatNumberToCurrency } from 'rupiah-currency-formatter'
 import { useProductStore } from '@/stores/product'
 
 const productStore = useProductStore()
@@ -35,7 +36,7 @@ const columns = [
     {
         type: 'attributes',
         label: 'Harga Jual',
-        keyItems: (obj) => obj.price_sell,
+        keyItems: (obj) => formatNumberToCurrency(Math.ceil(obj.price_sell)),
     },
     {
         type: 'relationships',
