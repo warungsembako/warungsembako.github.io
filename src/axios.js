@@ -1,4 +1,4 @@
 import axios from 'axios'
 
 axios.defaults.withCredentials = true
-axios.defaults.baseURL = 'https://warung-sembako.skripsi-muhammad-haidar.my.id'
+axios.defaults.baseURL = 'https://api.warungkusembako.my.id'
